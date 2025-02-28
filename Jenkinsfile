@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: env.BRANCH_NAME, credentialsId: 'github-credentials', url: 'https://github.com/YefriGonzalez/react-front.git'
+                git branch: "${env.GIT_BRANCH.replaceAll(/^origin\//, '')}", credentialsId: 'github-credentials', url: 'https://github.com/YefriGonzalez/react-front.git'
             }
         }
 
@@ -35,3 +35,4 @@ pipeline {
             echo 'Error en el pipeline'
         }
     }
+}
