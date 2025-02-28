@@ -1,42 +1,37 @@
 pipeline {
     agent any
-    
-    environment {
-        IMAGE_NAME = "mi-backend"
-        CONTAINER_NAME = "backend-container"
-    }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: env.BRANCH_NAME, credentialsId: 'github-credentials', url: 'https://github.com/YefriGonzalez/spring-boot-docker-example.git'
+                git branch: env.BRANCH_NAME, credentialsId: 'github-credentials', url: 'https://github.com/YefriGonzalez/react-front.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh 'npm run build'
             }
         }
 
-        stage('Docker Build & Run') {
+        stage('Run') {
             steps {
-                sh '''
-                docker stop $CONTAINER_NAME || true
-                docker rm $CONTAINER_NAME || true
-                docker build -t $IMAGE_NAME .
-                docker run -d -p 8080:8080 --name $CONTAINER_NAME $IMAGE_NAME
-                '''
+                sh 'npm start &'
             }
         }
     }
 
     post {
         success {
-            echo 'Backend desplegado correctamente en local'
+            echo 'Frontend desplegado correctamente en local'
         }
         failure {
             echo 'Error en el pipeline'
         }
     }
-}
